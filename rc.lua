@@ -172,7 +172,38 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1-TERM", "2-WEB", "3-COMM", "4-OBSIDIAN", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    -- awful.tag({ "1-TERM", "2-WEB", "3-COMM", "4-OBSIDIAN", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+
+    ----------------------------------------------------------------------
+    -- My custom tags
+
+    -- Terminal tag
+    awful.tag.add("1-TERM", {
+        icon = "terminal-icon.png",
+        layout = awful.layout.layouts[10],
+        screen = s,
+        selected = true,
+    })
+    -- Web tag
+    awful.tag.add("2-WEB", {
+        --icon = "terminal-icon.png",
+        layout = awful.layout.layouts[10],
+        screen = s,
+    })
+    -- Comm tag
+    awful.tag.add("3-COMM", {
+        --icon = "terminal-icon.png",
+        layout = awful.layout.layouts[10],
+        screen = s,
+    })
+    -- Obsidian tag
+    awful.tag.add("4-OBSIDIAN", {
+        layout = awful.layout.layouts[2],
+        screen = s,
+    })
+
+    -- END my custom tags
+    ----------------------------------------------------------------------
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -213,7 +244,7 @@ awful.screen.connect_for_each_screen(function(s)
         s.mytasklist, -- Middle widget
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
-            mykeyboardlayout,
+            --mykeyboardlayout,
             wibox.widget.systray(),
             mytextclock,
             s.mylayoutbox,
@@ -461,7 +492,7 @@ awful.rules.rules = {
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
                      placement = awful.placement.no_overlap+awful.placement.no_offscreen,
-                     size_hints_honor = false
+                     size_hints_honor = false -- This makes mate-terminal fille the entire assigned area.
      }
     },
 
