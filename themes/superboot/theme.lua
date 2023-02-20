@@ -37,7 +37,7 @@ theme.taglist_bg = "#ffffff"
 theme.taglist_bg_urgent = "#992424"
 
 -- Task list
-theme.tasklist_bg_focus = "#32874b"
+theme.tasklist_bg_focus = "#582a11"
 theme.tasklist_bg = "#14381f"
 
 -- There are other variable sets
