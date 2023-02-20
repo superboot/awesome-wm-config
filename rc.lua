@@ -558,6 +558,7 @@ root.keys(globalkeys)
 -- ↓↓↓ Rules
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
+    -- ↓↓↓2 All CLIENTS MATCH
     -- All clients will match this rule.
     { rule = { },
       properties = { border_width = beautiful.border_width,
@@ -571,7 +572,8 @@ awful.rules.rules = {
                      size_hints_honor = false -- This makes mate-terminal fille the entire assigned area.
      }
     },
-
+    -- ↑↑↑2 END All CLIENTS MATCH
+    -- ↓↓↓2 FLOATING CLIENTS
     -- Floating clients.
     { rule_any = {
         instance = {
@@ -590,7 +592,7 @@ awful.rules.rules = {
           "Wpa_gui",
           "veromix",
           "xtightvncviewer"},
-
+    
         -- Note that the name property shown in xprop might be set slightly after creation of the client
         -- and the name shown there might not match defined rules here.
         name = {
@@ -602,15 +604,18 @@ awful.rules.rules = {
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
       }, properties = { floating = true }},
-
-    -- Add titlebars to normal clients and dialogs
+    -- ↑↑↑2 END FLOATING CLIENTS
+    -- ↓↓↓2 TITLE BARS (OFF)
+    -- Remove title bars.
     { rule_any = {type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = false }
     },
-
+    -- ↑↑↑2 END TITLE BARS (OFF)
+    -- ↓↓↓2 EXAMPLE SETTING AN APPLICATION TO STAY ON A SPECIFIC TAG ON A SPECIFIC SCREEN
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
     --   properties = { screen = 1, tag = "2" } },
+    -- ↑↑↑2 END EXAMPLE SETTING APPLICATION TO STAY ON A SPECIFIC TAG ON A SPECIFIC SCREEN
 }
 -- ↑↑↑
 -- ↓↓↓ Signals
@@ -676,7 +681,6 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- ↑↑↑
-
 -- ↓↓↓1 HOLD JUNK
 -- -- Keyboard map indicator and switcher
 -- mykeyboardlayout = awful.widget.keyboardlayout()
