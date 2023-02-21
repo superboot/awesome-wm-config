@@ -96,9 +96,11 @@ awful.layout.layouts = {
 }
 -- ↑↑↑
 -- ↓↓↓1 HELPER FUNCTIONS
+-- ↓↓↓2 def launcherSpawnHandler()
 function launcherSpawnHandler (stdout, stderr, exitreason, exitcode)
     -- Nothing needed so far.
 end
+-- ↑↑↑2 END 
 -- ↑↑↑1 END HELPER FUNCTIONS
 -- ↓↓↓ MENU
 -- Create a launcher widget and a main menu
@@ -285,21 +287,19 @@ awful.screen.connect_for_each_screen(function(s)
             elseif s.index == 1 then
                 -- Terminal tag
                 awful.tag.add("1-TERM", {
-                    icon = "terminal-icon.png",
+                    --icon = "terminal-icon.png",
                     layout = awful.layout.layouts[10],
                     screen = s,
                     selected = true,
                 })
                 -- Web tag
                 awful.tag.add("2-WEB", {
-                    --icon = "terminal-icon.png",
                     layout = awful.layout.layouts[10],
                     screen = s,
                 })
                 -- Comm tag
                 awful.tag.add("3-COMM", {
-                    --icon = "terminal-icon.png",
-                    layout = awful.layout.layouts[10],
+                    layout = awful.layout.layouts[2],
                     screen = s,
                 })
                 -- Obsidian tag
@@ -307,25 +307,37 @@ awful.screen.connect_for_each_screen(function(s)
                     layout = awful.layout.layouts[2],
                     screen = s,
                 })
+                -- Zotero tag
+                awful.tag.add("5-ZOTERO", {
+                    layout = awful.layout.layouts[2],
+                    screen = s,
+                })
+                -- Calendar tag
+                awful.tag.add("6-CALENDAR", {
+                    layout = awful.layout.layouts[2],
+                    screen = s,
+                })
+                -- Inkscape tag
+                awful.tag.add("7-INKSCAPE", {
+                    layout = awful.layout.layouts[1],
+                    screen = s,
+                })
             -- ↑↑↑3 END CENTER SCREEN TAGS
             -- ↓↓↓3 RIGHT SCREEN TAGS (Screen #3)
             elseif s.index == 3 then
                 -- Terminal tag
                 awful.tag.add("1-TERM", {
-                    icon = "terminal-icon.png",
                     layout = awful.layout.layouts[10],
                     screen = s,
                     selected = true,
                 })
                 -- Web tag
                 awful.tag.add("2-WEB", {
-                    --icon = "terminal-icon.png",
                     layout = awful.layout.layouts[10],
                     screen = s,
                 })
                 -- Comm tag
                 awful.tag.add("3-COMM", {
-                    --icon = "terminal-icon.png",
                     layout = awful.layout.layouts[10],
                     screen = s,
                 })
@@ -371,25 +383,33 @@ awful.screen.connect_for_each_screen(function(s)
         elseif hostname == "linboss" then
             -- Terminal tag
             awful.tag.add("1-TERM", {
-                icon = "terminal-icon.png",
+                --icon = "terminal-icon.png",
                 layout = awful.layout.layouts[10],
                 screen = s,
                 selected = true,
             })
             -- Web tag
             awful.tag.add("2-WEB", {
-                --icon = "terminal-icon.png",
                 layout = awful.layout.layouts[10],
                 screen = s,
             })
             -- Comm tag
             awful.tag.add("3-COMM", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
+                layout = awful.layout.layouts[2],
                 screen = s,
             })
             -- Obsidian tag
             awful.tag.add("4-OBSIDIAN", {
+                layout = awful.layout.layouts[2],
+                screen = s,
+            })
+            -- Zotero tag
+            awful.tag.add("5-ZOTERO", {
+                layout = awful.layout.layouts[2],
+                screen = s,
+            })
+            -- Calendar tag
+            awful.tag.add("6-CALENDAR", {
                 layout = awful.layout.layouts[2],
                 screen = s,
             })
@@ -478,7 +498,7 @@ root.buttons(gears.table.join(
         awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
                 {description = "show main menu", group = "awesome"}),
         -- ↑↑↑3 END AWESOME
-        -- ↓↓↓3 CLIENT NAVIGATION
+        -- ↓↓↓3 CLIENT 
         awful.key({ modkey,           }, "j",
             function ()
                 awful.client.focus.byidx( 1)
@@ -498,8 +518,8 @@ root.buttons(gears.table.join(
             end,
             {description = "Kill the focussed client", group = "client"}
         ),
-        -- ↑↑↑3 END CLIENT MANIPULATION
-        -- ↓↓↓3 TAG MANIPULATION
+        -- ↑↑↑3 END CLIENT 
+        -- ↓↓↓3 TAG 
             -- ↓↓↓4 NAVIGATION
             awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
                     {description = "go back", group = "tag"}),
@@ -520,27 +540,53 @@ root.buttons(gears.table.join(
             awful.key({ modkey, "Shift"   }, "r", rename_tag,
                     {description = "rename the current tag", group = "tag"}),
             -- ↑↑↑4 END ADD/EDIT/DELTE
-        -- ↑↑↑3 END TAG MANIPULATION
-        -- ↓↓↓3 LAYOUT MANIPULATION
-        awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end,
+        -- ↑↑↑3 END TAG
+        -- ↓↓↓3 LAYOUT 
+        awful.key(
+                { modkey, "Shift"   }, "j",
+                function () awful.client.swap.byidx(  1)    end,
                 {description = "swap with next client by index", group = "client"}),
-        awful.key({ modkey, "Shift"   }, "k", function () awful.client.swap.byidx( -1)    end,
+                
+        awful.key(
+                { modkey, "Shift"   }, "k",
+                function () awful.client.swap.byidx( -1)    end,
                 {description = "swap with previous client by index", group = "client"}),
-        awful.key({ modkey, "Control" }, "j", function () awful.screen.focus_relative( 1) end,
-                {description = "focus the next screen", group = "screen"}),
-        awful.key({ modkey, "Control" }, "k", function () awful.screen.focus_relative(-1) end,
-                {description = "focus the previous screen", group = "screen"}),
-        awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
+
+        awful.key(
+                { modkey, "Control" }, "j",
+                function () awful.screen.focus_bydirection( "down" ) end,
+                {description = "focus the screen below", group = "screen"}),
+
+        awful.key(
+                { modkey, "Control" }, "k",
+                function () awful.screen.focus_bydirection( "up" ) end,
+                {description = "focus the screen above", group = "screen"}),
+
+        awful.key(
+                { modkey, "Control" }, "h",
+                function () awful.screen.focus_bydirection( "left" ) end,
+                {description = "focus the screen to the left", group = "screen"}),
+
+        awful.key(
+                { modkey, "Control" }, "l",
+                function () awful.screen.focus_bydirection( "right" ) end,
+                {description = "focus the screen to the right", group = "screen"}),
+
+        awful.key(
+                { modkey,           }, "u",
+                awful.client.urgent.jumpto,
                 {description = "jump to urgent client", group = "client"}),
-        awful.key({ modkey,           }, "Tab",
-            function ()
-                awful.client.focus.history.previous()
-                if client.focus then
-                    client.focus:raise()
-                end
-            end,
-            {description = "go back", group = "client"}),
-        -- ↑↑↑3 END LAYOUT MANIPULATION
+
+        awful.key(
+                { modkey,           }, "Tab",
+                function ()
+                    awful.client.focus.history.previous()
+                    if client.focus then
+                        client.focus:raise()
+                    end
+                end,
+                {description = "go back", group = "client"}),
+        -- ↑↑↑3 END LAYOUT 
         -- ↓↓↓3 STANDARD PROGRAM
         awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
                 {description = "open a terminal", group = "launcher"}),
@@ -557,9 +603,9 @@ root.buttons(gears.table.join(
                 {description = "increase the number of master clients", group = "layout"}),
         awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
                 {description = "decrease the number of master clients", group = "layout"}),
-        awful.key({ modkey, "Control" }, "h",     function () awful.tag.incncol( 1, nil, true)    end,
+        awful.key({ modkey, "Control", "Shift" }, "h",     function () awful.tag.incncol( 1, nil, true)    end,
                 {description = "increase the number of columns", group = "layout"}),
-        awful.key({ modkey, "Control" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
+        awful.key({ modkey, "Control", "Shift" }, "l",     function () awful.tag.incncol(-1, nil, true)    end,
                 {description = "decrease the number of columns", group = "layout"}),
         awful.key({ modkey,           }, "space", function () awful.layout.inc( 1)                end,
                 {description = "select next", group = "layout"}),
@@ -788,6 +834,15 @@ awful.rules.rules = {
     -- ↓↓↓2 SPECIFIC APPLICATIONS
     { rule = { class = "Pavucontrol" },
       properties = { screen = 2, tag = "2-AUDIO" } 
+    },
+    { rule = { class = "TelegramDesktop" },
+      properties = { screen = 1, tag = "3-COMM" } 
+    },
+    { rule = { class = "obsidian" },
+      properties = { screen = 1, tag = "4-OBSIDIAN" } 
+    },
+    { rule = { class = "Morgen" },
+      properties = { screen = 1, tag = "6-CALENDAR" } 
     }
     -- ↑↑↑2 END SPECIFIC APPLICATIONS
     -- ↓↓↓2 EXAMPLE SETTING AN APPLICATION TO STAY ON A SPECIFIC TAG ON A SPECIFIC SCREEN
