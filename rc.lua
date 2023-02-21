@@ -6,6 +6,7 @@ pcall(require, "luarocks.loader")
 -- ↑↑↑2 END LUAROCKS
 -- ↓↓↓2 LUA STANDARD LIBRARY
 os = require("os")
+io = require("io")
 -- ↑↑↑2 END LUA STANDARD LIBRARY
 -- ↓↓↓2 STANDARD AWESOME LIBRARY
 local gears = require("gears")
@@ -30,10 +31,10 @@ require("awful.hotkeys_popup.keys")
 -- ↑↑↑2 END EXTRA HELP
 -- ↑↑↑1 END IMPORTS
 -- ↓↓↓1 GLOBAL VARS
-hostname = awful.spawn.easy_async_with_shell("hostname", function (stdout, stderr, exitReason, exitCode) return stdout  end)
+local hostname = io.lines('/proc/sys/kernel/hostname')()
 --hostname = os.getenv("HOSTNAME")
 -- ↑↑↑1 END GLOBAL VARS
--- ↓↓↓ Error handling
+-- ↓↓↓ ERROR HANDLING
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
 if awesome.startup_errors then
@@ -57,7 +58,7 @@ do
     end)
 end
 -- ↑↑↑
--- ↓↓↓ Variable definitions
+-- ↓↓↓ VARIABLE DEFINITIONS
 -- Themes define colours, icons, font and wallpapers.
 -- beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/superboot/theme.lua")
@@ -99,7 +100,7 @@ function launcherSpawnHandler (stdout, stderr, exitreason, exitcode)
     -- Nothing needed so far.
 end
 -- ↑↑↑1 END HELPER FUNCTIONS
--- ↓↓↓ Menu
+-- ↓↓↓ MENU
 -- Create a launcher widget and a main menu
 myawesomemenu = {
    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
@@ -120,7 +121,7 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
 -- ↑↑↑
--- ↓↓↓1 Tag add edit delete functions
+-- ↓↓↓1 TAG ADD EDIT DELETE FUNCTIONS
 -- Functions from https://awesomewm.org/apidoc/core_components/tag.html
 -- ↓↓↓2 def delete_tag()
 local function delete_tag()
@@ -174,67 +175,74 @@ local function copy_tag()
 end
 -- ↑↑↑2 END copy_tag
 -- ↑↑↑1 END Tag add edit delete functions
--- ↓↓↓1 Wibar
--- Create a textclock widget
---mytextclock = wibox.widget.textclock()
-mytextclock = wibox.widget.textclock(" %a %b %d, %I:%M%p ")
-
-
+-- ↓↓↓1 STATUS BAR (CLOCK, TAGS, TASKLIST, LAYOUT INDICATOR)
 -- Create a wibox for each screen and add it
-local taglist_buttons = gears.table.join(
-                    awful.button({ }, 1, function(t) t:view_only() end),
-                    awful.button({ modkey }, 1, function(t)
-                                              if client.focus then
-                                                  client.focus:move_to_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 3, awful.tag.viewtoggle),
-                    awful.button({ modkey }, 3, function(t)
-                                              if client.focus then
-                                                  client.focus:toggle_tag(t)
-                                              end
-                                          end),
-                    awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
-                    awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
-                )
+    -- ↓↓↓2 CLOCK
+    -- Create a textclock widget
+    --mytextclock = wibox.widget.textclock()
+    mytextclock = wibox.widget.textclock(" %a %b %d, %I:%M%p ")
+    -- ↑↑↑2 END CLOCK
+    -- ↓↓↓2 TAGLIST MOUSE BINDINGS
+    local taglist_buttons = gears.table.join(
+                        awful.button({ }, 1, function(t) t:view_only() end),
+                        awful.button({ modkey }, 1, function(t)
+                                                if client.focus then
+                                                    client.focus:move_to_tag(t)
+                                                end
+                                            end),
+                        awful.button({ }, 3, awful.tag.viewtoggle),
+                        awful.button({ modkey }, 3, function(t)
+                                                if client.focus then
+                                                    client.focus:toggle_tag(t)
+                                                end
+                                            end),
+                        awful.button({ }, 4, function(t) awful.tag.viewnext(t.screen) end),
+                        awful.button({ }, 5, function(t) awful.tag.viewprev(t.screen) end)
+                    )
+    -- ↑↑↑2 END TAGLIST MOUSE BINDINGS
+    -- ↓↓↓2 TASKLIST MOUSE BINDINGS
+    local tasklist_buttons = gears.table.join(
+                         awful.button({ }, 1, function (c)
+                                                  if c == client.focus then
+                                                      c.minimized = true
+                                                  else
+                                                      c:emit_signal(
+                                                          "request::activate",
+                                                          "tasklist",
+                                                          {raise = true}
+                                                      )
+                                                  end
+                                              end),
+                         awful.button({ }, 3, function()
+                                                  awful.menu.client_list({ theme = { width = 250 } })
+                                              end),
+                         awful.button({ }, 4, function ()
+                                                  awful.client.focus.byidx(1)
+                                              end),
+                         awful.button({ }, 5, function ()
+                                                  awful.client.focus.byidx(-1)
+                                              end))
+    -- ↑↑↑2 END TASKLIST MOUSE BINDINGS
 
-local tasklist_buttons = gears.table.join(
-                     awful.button({ }, 1, function (c)
-                                              if c == client.focus then
-                                                  c.minimized = true
-                                              else
-                                                  c:emit_signal(
-                                                      "request::activate",
-                                                      "tasklist",
-                                                      {raise = true}
-                                                  )
-                                              end
-                                          end),
-                     awful.button({ }, 3, function()
-                                              awful.menu.client_list({ theme = { width = 250 } })
-                                          end),
-                     awful.button({ }, 4, function ()
-                                              awful.client.focus.byidx(1)
-                                          end),
-                     awful.button({ }, 5, function ()
-                                              awful.client.focus.byidx(-1)
-                                          end))
-
-local function set_wallpaper(s)
-    -- Wallpaper
-    if beautiful.wallpaper then
-        local wallpaper = beautiful.wallpaper
-        -- If wallpaper is a function, call it with the screen
-        if type(wallpaper) == "function" then
-            wallpaper = wallpaper(s)
+-- WALLPAPER
+    -- ↓↓↓2 def set_wallpaper()
+    local function set_wallpaper(s)
+        -- Wallpaper
+        if beautiful.wallpaper then
+            local wallpaper = beautiful.wallpaper
+            -- If wallpaper is a function, call it with the screen
+            if type(wallpaper) == "function" then
+                wallpaper = wallpaper(s)
+            end
+            gears.wallpaper.maximized(wallpaper, s, true)
         end
-        gears.wallpaper.maximized(wallpaper, s, true)
     end
-end
-
+    -- ↑↑↑2 END set_wallpaper
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+
+-- Add the following annonomous function to the run-list for when a screen is connected.
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
@@ -242,11 +250,125 @@ awful.screen.connect_for_each_screen(function(s)
     -- Each screen has its own tag table.
     -- awful.tag({ "1-TERM", "2-WEB", "3-COMM", "4-OBSIDIAN", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
-    -- ↓↓↓2 MANGCHI TAGS
 
-    --if hostanme == "mangchi" then
-        -- ↓↓↓3 LEFT SCREEN TAGS
-        if s.index == 4 then
+    if hostname then 
+        -- ↓↓↓2 MANGCHI TAGS
+        if hostname == "mangchi" then
+            -- ↓↓↓3 LEFT SCREEN TAGS (Screen #4)
+            if s.index == 4 then
+                -- Terminal tag
+                awful.tag.add("1-TERM", {
+                    icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                    selected = true,
+                })
+                -- Web tag
+                awful.tag.add("2-WEB", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Comm tag
+                awful.tag.add("3-COMM", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Obsidian tag
+                awful.tag.add("4-OBSIDIAN", {
+                    layout = awful.layout.layouts[2],
+                    screen = s,
+                })
+            -- ↑↑↑3 END LEFT SCREEN TAGS
+            -- ↓↓↓3 CENTER SCREEN TAGS (Screen #1)
+            elseif s.index == 1 then
+                -- Terminal tag
+                awful.tag.add("1-TERM", {
+                    icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                    selected = true,
+                })
+                -- Web tag
+                awful.tag.add("2-WEB", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Comm tag
+                awful.tag.add("3-COMM", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Obsidian tag
+                awful.tag.add("4-OBSIDIAN", {
+                    layout = awful.layout.layouts[2],
+                    screen = s,
+                })
+            -- ↑↑↑3 END CENTER SCREEN TAGS
+            -- ↓↓↓3 RIGHT SCREEN TAGS (Screen #3)
+            elseif s.index == 3 then
+                -- Terminal tag
+                awful.tag.add("1-TERM", {
+                    icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                    selected = true,
+                })
+                -- Web tag
+                awful.tag.add("2-WEB", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Comm tag
+                awful.tag.add("3-COMM", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Obsidian tag
+                awful.tag.add("4-OBSIDIAN", {
+                    layout = awful.layout.layouts[2],
+                    screen = s,
+                })
+            -- ↑↑↑3 END RIGHT SCREEN TAGS
+            -- ↓↓↓3 TOP SCREEN TAGS (Screen #2)
+            elseif s.index == 2 then
+                -- Terminal tag
+                awful.tag.add("1-REF", {
+                    icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                    selected = true,
+                })
+                -- Web tag
+                awful.tag.add("2-AUDIO", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Comm tag
+                awful.tag.add("3-COMM", {
+                    --icon = "terminal-icon.png",
+                    layout = awful.layout.layouts[10],
+                    screen = s,
+                })
+                -- Obsidian tag
+                awful.tag.add("4-MISC", {
+                    layout = awful.layout.layouts[2],
+                    screen = s,
+                })
+            else -- The screen was not one of the above indexes. Give it a gerneral layout.
+                awful.tag({ "1-TERM", "2-WEB", "3-COMM", "4-OBSIDIAN", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+            end
+            -- ↑↑↑3 END TOP SCREEN TAGS
+        -- ↑↑↑2 END MANGCHI TAGS
+    -- OR --
+        -- ↓↓↓2 LINBOSS TAGS
+        elseif hostname == "linboss" then
             -- Terminal tag
             awful.tag.add("1-TERM", {
                 icon = "terminal-icon.png",
@@ -271,98 +393,23 @@ awful.screen.connect_for_each_screen(function(s)
                 layout = awful.layout.layouts[2],
                 screen = s,
             })
+        -- ↑↑↑2 END LINBOSS TAGS
+    -- OR --
+        -- ↓↓↓2 FALLBACK GENERAL TAGS
+        else -- We can't match a hostname
+            -- Basic normal tags
+            awful.tag({ "1-TERM", "2-WEB", "3-COMM", "4-OBSIDIAN", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
         end
-        -- ↑↑↑3 END LEFT SCREEN TAGS
-        -- ↓↓↓3 CENTER SCREEN TAGS
-        if s.index == 1 then
-            -- Terminal tag
-            awful.tag.add("1-TERM", {
-                icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-                selected = true,
-            })
-            -- Web tag
-            awful.tag.add("2-WEB", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-            })
-            -- Comm tag
-            awful.tag.add("3-COMM", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-            })
-            -- Obsidian tag
-            awful.tag.add("4-OBSIDIAN", {
-                layout = awful.layout.layouts[2],
-                screen = s,
-            })
-        end
-        -- ↑↑↑3 END CENTER SCREEN TAGS
-        -- ↓↓↓3 RIGHT SCREEN TAGS
-        if s.index == 3 then
-            -- Terminal tag
-            awful.tag.add("1-TERM", {
-                icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-                selected = true,
-            })
-            -- Web tag
-            awful.tag.add("2-WEB", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-            })
-            -- Comm tag
-            awful.tag.add("3-COMM", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-            })
-            -- Obsidian tag
-            awful.tag.add("4-OBSIDIAN", {
-                layout = awful.layout.layouts[2],
-                screen = s,
-            })
-        end
-        -- ↑↑↑3 END RIGHT SCREEN TAGS
-        -- ↓↓↓3 TOP SCREEN TAGS
-        if s.index == 2 then
-            -- Terminal tag
-            awful.tag.add("1-REF", {
-                icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-                selected = true,
-            })
-            -- Web tag
-            awful.tag.add("2-AUDIO", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-            })
-            -- Comm tag
-            awful.tag.add("3-COMM", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-            })
-            -- Obsidian tag
-            awful.tag.add("4-MISC", {
-                layout = awful.layout.layouts[2],
-                screen = s,
-            })
-        end
-        -- ↑↑↑3 END TOP SCREEN TAGS
-    --end
-    -- ↑↑↑2 END MANGCHI TAGS
+    else -- We can't find the hostname, so just set basic tags.
+        -- Basic normal tags
+        awful.tag({ "1-TERM", "2-WEB", "3-COMM", "4-OBSIDIAN", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+        -- ↑↑↑2 END FALLBACK GENERAL TAGS
+    end
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
     -- Create an imagebox widget which will contain an icon indicating which layout we're using.
+    -- ↓↓↓2 LAYOUTBOX
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
     s.mylayoutbox:buttons(gears.table.join(
@@ -370,33 +417,39 @@ awful.screen.connect_for_each_screen(function(s)
                            awful.button({ }, 3, function () awful.layout.inc(-1) end),
                            awful.button({ }, 4, function () awful.layout.inc( 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(-1) end)))
+    -- ↑↑↑2 END LAYOUTBOX
+    -- ↓↓↓2 TAGLIST WIDGET
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist {
         screen  = s,
         filter  = awful.widget.taglist.filter.all,
         buttons = taglist_buttons
     }
-
+    -- ↑↑↑2 END TAGLIST WIDGET
+    -- ↓↓↓2 TASKLIST WIDGET
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist {
         screen  = s,
         filter  = awful.widget.tasklist.filter.currenttags,
         buttons = tasklist_buttons
     }
-
-    -- Create the wibox
-    s.mywibox = awful.wibar({ position = "bottom", screen = s })
-
-    -- Add widgets to the wibox
-    s.mywibox:setup {
+    -- ↑↑↑2 END TASKLIST WIDGET
+    -- ↓↓↓2 MAIN STATUS BAR (WIBAR) COMPOSITION
+    s.mywibox = awful.wibar({ position = "bottom", screen = s }) -- Create the wibox
+    s.mywibox:setup { -- Add widgets to the wibox
         layout = wibox.layout.align.horizontal,
+        -- ↓↓↓3 LEFT SIDE
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
             mylauncher,
             s.mytaglist,
             s.mypromptbox,
         },
+        -- ↑↑↑3 END LEFT SIDE
+        -- ↓↓↓3 MIDDLE 
         s.mytasklist, -- Middle widget
+        -- ↑↑↑3 END MIDDLE 
+        -- ↓↓↓3 RIGHT SIDE
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             --mykeyboardlayout,
@@ -404,17 +457,19 @@ awful.screen.connect_for_each_screen(function(s)
             mytextclock,
             s.mylayoutbox,
         },
+        -- ↑↑↑3 END RIGHT SIDE
     }
+    -- ↑↑↑2 END MAIN STATUS BAR (WIBAR) COMPOSITION
 end)
--- ↑↑↑1
--- ↓↓↓ Mouse bindings
+-- ↑↑↑1 END STATUS BAR
+-- ↓↓↓ MOUSE BINDINGS
 root.buttons(gears.table.join(
     awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- ↑↑↑
--- ↓↓↓1 Key bindings
+-- ↓↓↓1 KEY BINDINGS
     -- ↓↓↓2 GLOBAL
     globalkeys = gears.table.join(
         -- ↓↓↓3 AWESOME
@@ -674,7 +729,7 @@ root.buttons(gears.table.join(
 -- Set keys
 root.keys(globalkeys)
 -- ↑↑↑1
--- ↓↓↓ Rules
+-- ↓↓↓ RULES
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     -- ↓↓↓2 All CLIENTS MATCH
@@ -732,7 +787,8 @@ awful.rules.rules = {
     -- ↑↑↑2 END TITLE BARS (OFF)
     -- ↓↓↓2 SPECIFIC APPLICATIONS
     { rule = { class = "Pavucontrol" },
-      2, tag = "1-TERM" } 
+      properties = { screen = 2, tag = "2-AUDIO" } 
+    }
     -- ↑↑↑2 END SPECIFIC APPLICATIONS
     -- ↓↓↓2 EXAMPLE SETTING AN APPLICATION TO STAY ON A SPECIFIC TAG ON A SPECIFIC SCREEN
     -- Set Firefox to always map on the tag named "2" on screen 1.
@@ -741,7 +797,7 @@ awful.rules.rules = {
     -- ↑↑↑2 END EXAMPLE SETTING APPLICATION TO STAY ON A SPECIFIC TAG ON A SPECIFIC SCREEN
 }
 -- ↑↑↑
--- ↓↓↓ Signals
+-- ↓↓↓ SIGNALS
 -- Signal function to execute when a new client appears.
 client.connect_signal("manage", function (c)
     -- Set the windows at the slave,
