@@ -553,22 +553,22 @@ root.buttons(gears.table.join(
                 {description = "swap with previous client by index", group = "client"}),
 
         awful.key(
-                { modkey, "Control" }, "j",
+                { modkey, "Shift"   }, "j",
                 function () awful.screen.focus_bydirection( "down" ) end,
                 {description = "focus the screen below", group = "screen"}),
 
         awful.key(
-                { modkey, "Control" }, "k",
+                { modkey, "Shift"   }, "k",
                 function () awful.screen.focus_bydirection( "up" ) end,
                 {description = "focus the screen above", group = "screen"}),
 
         awful.key(
-                { modkey, "Control" }, "h",
+                { modkey, "Shift" }, "h",
                 function () awful.screen.focus_bydirection( "left" ) end,
                 {description = "focus the screen to the left", group = "screen"}),
 
         awful.key(
-                { modkey, "Control" }, "l",
+                { modkey, "Shift" }, "l",
                 function () awful.screen.focus_bydirection( "right" ) end,
                 {description = "focus the screen to the right", group = "screen"}),
 
@@ -599,9 +599,9 @@ root.buttons(gears.table.join(
                 {description = "increase master width factor", group = "layout"}),
         awful.key({ modkey,           }, "h",     function () awful.tag.incmwfact(-0.05)          end,
                 {description = "decrease master width factor", group = "layout"}),
-        awful.key({ modkey, "Shift"   }, "h",     function () awful.tag.incnmaster( 1, nil, true) end,
+        awful.key({ modkey, "Control"   }, "h",     function () awful.tag.incnmaster( 1, nil, true) end,
                 {description = "increase the number of master clients", group = "layout"}),
-        awful.key({ modkey, "Shift"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
+        awful.key({ modkey, "Control"   }, "l",     function () awful.tag.incnmaster(-1, nil, true) end,
                 {description = "decrease the number of master clients", group = "layout"}),
         awful.key({ modkey, "Control", "Shift" }, "h",     function () awful.tag.incncol( 1, nil, true)    end,
                 {description = "increase the number of columns", group = "layout"}),
