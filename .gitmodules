@@ -1,0 +1,3 @@
+[submodule "themes/awesome-wm-theme"]
+	path = themes/awesome-wm-theme
+	url = https://github.com/Relz/awesome-wm-theme.git

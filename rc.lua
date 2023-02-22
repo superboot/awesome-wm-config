@@ -286,39 +286,39 @@ awful.screen.connect_for_each_screen(function(s)
             -- ↓↓↓3 CENTER SCREEN TAGS (Screen #1)
             elseif s.index == 1 then
                 -- Terminal tag
-                awful.tag.add("1-TERM", {
+                awful.tag.add("TERM", {
                     --icon = "terminal-icon.png",
-                    layout = awful.layout.layouts[10],
+                    layout = awful.layout.layouts[2],
                     screen = s,
                     selected = true,
                 })
                 -- Web tag
-                awful.tag.add("2-WEB", {
-                    layout = awful.layout.layouts[10],
+                awful.tag.add("WEB", {
+                    layout = awful.layout.layouts[2],
                     screen = s,
                 })
                 -- Comm tag
-                awful.tag.add("3-COMM", {
+                awful.tag.add("COMM", {
                     layout = awful.layout.layouts[2],
                     screen = s,
                 })
                 -- Obsidian tag
-                awful.tag.add("4-OBSIDIAN", {
+                awful.tag.add("OBSIDIAN", {
                     layout = awful.layout.layouts[2],
                     screen = s,
                 })
                 -- Zotero tag
-                awful.tag.add("5-ZOTERO", {
+                awful.tag.add("ZOTERO", {
                     layout = awful.layout.layouts[2],
                     screen = s,
                 })
                 -- Calendar tag
-                awful.tag.add("6-CALENDAR", {
+                awful.tag.add("CALENDAR", {
                     layout = awful.layout.layouts[2],
                     screen = s,
                 })
                 -- Inkscape tag
-                awful.tag.add("7-INKSCAPE", {
+                awful.tag.add("INKSCAPE", {
                     layout = awful.layout.layouts[1],
                     screen = s,
                 })
@@ -495,8 +495,6 @@ root.buttons(gears.table.join(
         -- ↓↓↓3 AWESOME
         awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
                 {description="show help", group="awesome"}),
-        awful.key({ modkey,           }, "w", function () mymainmenu:show() end,
-                {description = "show main menu", group = "awesome"}),
         -- ↑↑↑3 END AWESOME
         -- ↓↓↓3 CLIENT 
         awful.key({ modkey,           }, "j",
@@ -543,12 +541,12 @@ root.buttons(gears.table.join(
         -- ↑↑↑3 END TAG
         -- ↓↓↓3 LAYOUT 
         awful.key(
-                { modkey, "Shift"   }, "j",
+                { modkey, "Control" }, "j",
                 function () awful.client.swap.byidx(  1)    end,
                 {description = "swap with next client by index", group = "client"}),
                 
         awful.key(
-                { modkey, "Shift"   }, "k",
+                { modkey, "Control" }, "k",
                 function () awful.client.swap.byidx( -1)    end,
                 {description = "swap with previous client by index", group = "client"}),
 
