@@ -835,17 +835,28 @@ awful.rules.rules = {
     },
     -- ↑↑↑2 END TITLE BARS (OFF)
     -- ↓↓↓2 SPECIFIC APPLICATIONS
+    -- TOP SCREEN
     { rule = { class = "Pavucontrol" },
-      properties = { screen = 2, tag = "2-AUDIO" } 
+      properties = { screen = 2, tag = "AUDIO" } 
+    },
+    -- CENTER SCREEN
+    { rule = { class = "mate-terminal" },
+      properties = { screen = 1, tag = "TERM" } 
+    },
+    { rule = { class = "firefox" },
+      properties = { screen = 1, tag = "TERM" } 
     },
     { rule = { class = "TelegramDesktop" },
-      properties = { screen = 1, tag = "3-COMM" } 
+      properties = { screen = 1, tag = "COMM" } 
     },
     { rule = { class = "obsidian" },
-      properties = { screen = 1, tag = "4-OBSIDIAN" } 
+      properties = { screen = 1, tag = "OBSIDIAN" } 
+    },
+    { rule = { class = "Zotero" },
+      properties = { screen = 1, tag = "ZOTERO" } 
     },
     { rule = { class = "Morgen" },
-      properties = { screen = 1, tag = "6-CALENDAR" } 
+      properties = { screen = 1, tag = "CALENDAR" } 
     }
     -- ↑↑↑2 END SPECIFIC APPLICATIONS
     -- ↓↓↓2 EXAMPLE SETTING AN APPLICATION TO STAY ON A SPECIFIC TAG ON A SPECIFIC SCREEN
@@ -918,6 +929,27 @@ end)
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- ↑↑↑
+-- ↓↓↓1 STARTUP APPLICATIONS
+-- Applications to start on login.
+autorun = true
+autorunApplicaitons = {
+    "xmodmap ~/.caps-to-ctrl.map", -- Set caps lock to control
+    "xset r rate 250 50", -- Set keyboard repeat delay and rate
+    "xset s off", -- Turn off screen blanking
+    "mate-terminal",
+    "firefox",
+    "telegram",
+    "obsidian",
+    "zotero",
+    "morgen"
+}
+if autorun then
+    for _, app in pairs(autorunApplicaitons) do
+        awful.spawn("runonce "..app)
+    end
+end
+-- ↑↑↑1 END STARTUP APPLICATIONS
+
 -- ↓↓↓1 HOLD JUNK
 -- -- Keyboard map indicator and switcher
 -- mykeyboardlayout = awful.widget.keyboardlayout()
