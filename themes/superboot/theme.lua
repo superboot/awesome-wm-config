@@ -11,7 +11,7 @@ local themes_path = gfs.get_themes_dir()
 
 local theme = {}
 
-theme.font          = "mono 10"
+theme.font          = "mono 12"
 
 theme.bg_normal     = "#222222"
 theme.bg_focus      = "#535d6c"
@@ -31,7 +31,8 @@ theme.border_focus  = "#535d6c"
 theme.border_marked = "#91231c"
 
 -- Tag list
-theme.taglist_bg_focus = "#325987"
+--theme.taglist_bg_focus = "#325987"
+theme.taglist_bg_focus = "#3465A4"
 theme.taglist_fg_focus = "#ffffff"
 theme.taglist_bg = "#ffffff"
 theme.taglist_bg_urgent = "#992424"
@@ -39,6 +40,13 @@ theme.taglist_bg_urgent = "#992424"
 -- Task list
 theme.tasklist_bg_focus = "#582a11"
 theme.tasklist_bg = "#14381f"
+
+-- Prompt box
+theme.prompt_fg = "#000000"
+theme.prompt_bg = "#f7c933"
+theme.prompt_fg_cursor = "#fc0000"
+--theme.prompt_bg_cursor = ""
+--ftheme.prompt_ont = ""
 
 -- There are other variable sets
 -- overriding the default one when

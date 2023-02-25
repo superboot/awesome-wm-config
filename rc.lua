@@ -101,6 +101,14 @@ function launcherSpawnHandler (stdout, stderr, exitreason, exitcode)
     -- Nothing needed so far.
 end
 -- ↑↑↑2 END 
+-- ↓↓↓2 def webSearchWrapper()
+function webSearchWrapper(search)
+    if search == '' then
+        return
+    end
+    awful.spawn("webSearchScript --browser firefox --engine duckduckgo " .. search)
+end
+-- ↑↑↑2 END def webSearchWrapper()
 -- ↑↑↑1 END HELPER FUNCTIONS
 -- ↓↓↓ MENU
 -- Create a launcher widget and a main menu
@@ -633,6 +641,18 @@ root.buttons(gears.table.join(
         awful.key({ modkey },            "r",     function () awful.screen.focused().mypromptbox:run() end,
                 {description = "run prompt", group = "launcher"}),
 
+        -- Web search
+        awful.key({ modkey, "Shift" },   "/",
+                function ()
+                    awful.prompt.run {
+                        prompt       = "Web Search: ",
+                        textbox      = awful.screen.focused().mypromptbox.widget,
+                        exe_callback = webSearchWrapper,
+                        history_path = awful.util.get_cache_dir() .. "/history_search"
+                        }
+                end,
+                {description = "Search the Internet in Firefox", group = "launcher"}),
+
         awful.key({ modkey }, "x",
                 function ()
                     awful.prompt.run {
@@ -935,7 +955,8 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Applications to start on login.
 autorun = true
 autorunApplicaitons = {
-    "xmodmap ~/.caps-to-ctrl.map", -- Set caps lock to control
+    "kb",
+    --"xmodmap ~/.caps-to-ctrl.map", -- Set caps lock to control
     "xset r rate 250 50", -- Set keyboard repeat delay and rate
     "xset s off", -- Turn off screen blanking
     "mate-terminal",
