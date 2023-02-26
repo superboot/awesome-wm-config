@@ -109,6 +109,15 @@ function webSearchWrapper(search)
     awful.spawn("webSearchScript --browser firefox --engine duckduckgo " .. search)
 end
 -- ↑↑↑2 END def webSearchWrapper()
+-- ↓↓↓1 def tell()
+function tell(title, message)
+    -- Sends a notification with the given message
+    naughty.notify({ 
+                     title = title,
+                     text = message
+                 })
+end
+-- ↑↑↑1 END def tell()
 -- ↑↑↑1 END HELPER FUNCTIONS
 -- ↓↓↓ MENU
 -- Create a launcher widget and a main menu
@@ -522,13 +531,6 @@ root.buttons(gears.table.join(
             end,
             {description = "focus previous by index", group = "client"}
         ),
-        awful.key({ modkey,  "Shift"  }, "x",
-            function ()
-                local c = client.focus
-                c:kill()
-            end,
-            {description = "Kill the focussed client", group = "client"}
-        ),
         -- ↑↑↑3 END CLIENT 
         -- ↓↓↓3 TAG 
             -- ↓↓↓4 NAVIGATION
@@ -584,7 +586,7 @@ root.buttons(gears.table.join(
                 {description = "focus the screen to the right", group = "screen"}),
 
         awful.key(
-                { modkey,           }, "u",
+                { modkey, "Shift" }, "u",
                 awful.client.urgent.jumpto,
                 {description = "jump to urgent client", group = "client"}),
 
@@ -605,7 +607,7 @@ root.buttons(gears.table.join(
                 {description = "reload awesome", group = "awesome"}),
         awful.key({ modkey, "Shift" }, "F9", awesome.restart,
                 {description = "reload awesome", group = "awesome"}),
-        awful.key({ modkey, "sHIft"   }, "q", awesome.quit,
+        awful.key({ modkey, "Shift"   }, "q", awesome.quit,
                 {description = "quit awesome", group = "awesome"}),
 
         awful.key({ modkey,           }, "l",     function () awful.tag.incmwfact( 0.05)          end,
@@ -866,7 +868,7 @@ awful.rules.rules = {
       properties = { screen = 1, tag = "TERM" } 
     },
     { rule = { class = "firefox" },
-      properties = { screen = 1, tag = "TERM" } 
+      properties = { screen = 1, tag = "WEB" } 
     },
     { rule = { class = "TelegramDesktop" },
       properties = { screen = 1, tag = "COMM" } 
@@ -959,7 +961,7 @@ autorunApplicaitons = {
     --"xmodmap ~/.caps-to-ctrl.map", -- Set caps lock to control
     "xset r rate 250 50", -- Set keyboard repeat delay and rate
     "xset s off", -- Turn off screen blanking
-    "mate-terminal",
+    "mate-terminal -e 'tmux new-session -A -s MAIN'", -- Make the session "MAIN" unless it exists, in which case, attach to it.
     "firefox",
     "telegram",
     "obsidian",
