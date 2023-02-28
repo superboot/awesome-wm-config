@@ -109,7 +109,16 @@ function webSearchWrapper(search)
     awful.spawn("webSearchScript --browser firefox --engine duckduckgo " .. search)
 end
 -- ↑↑↑2 END def webSearchWrapper()
--- ↓↓↓1 def tell()
+-- ↓↓↓2 def concatTables()
+function concatTables(t1,t2)
+	-- from https://stackoverflow.com/questions/1410862/concatenation-of-tables-in-lua
+    for i=1,#t2 do
+        t1[#t1+1] = t2[i]
+    end
+    return t1
+end
+-- ↑↑↑2 END def concatTables()
+-- ↓↓↓2 def tell()
 function tell(title, message)
     -- Sends a notification with the given message
     naughty.notify({ 
@@ -117,7 +126,24 @@ function tell(title, message)
                      text = message
                  })
 end
--- ↑↑↑1 END def tell()
+-- ↑↑↑2 END def tell()
+-- ↓↓↓2 def runonce()
+function runonce(command)
+    -- for debugging, using the notifiaction system to get output, and see what is returned by easy_async.
+    awful.spawn.easy_async("pgrep -f '"..command.."'", function(out, err, reason, exitcode)
+        if exitcode ~= 0 then
+            -- There was no "command" running.
+            -- Run one
+            awful.spawn(command)
+            --awful.spawn.easy_async(command, function(out, err, reason, exitcode) 
+                --if exitcode == 0 then
+                    --tell("Launched: "..command)
+                --end
+            --end)
+        end
+    end) 
+end
+-- ↑↑↑2 END def runonce()
 -- ↑↑↑1 END HELPER FUNCTIONS
 -- ↓↓↓ MENU
 -- Create a launcher widget and a main menu
@@ -270,6 +296,43 @@ awful.screen.connect_for_each_screen(function(s)
     -- awful.tag({ "1-TERM", "2-WEB", "3-COMM", "4-OBSIDIAN", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
 
 
+    -- ↓↓↓2 PRIMARY SCREEN
+    if s.index == screen.primary.index then
+        -- Terminal tag
+        awful.tag.add("TERM", {
+            --icon = "terminal-icon.png",
+            layout = awful.layout.layouts[2],
+            screen = s,
+            selected = true,
+        })
+        -- Web tag
+        awful.tag.add("WEB", {
+            layout = awful.layout.layouts[2],
+            screen = s,
+        })
+        -- Comm tag
+        awful.tag.add("COMM", {
+            layout = awful.layout.layouts[2],
+            screen = s,
+        })
+        -- Obsidian tag
+        awful.tag.add("OBSIDIAN", {
+            layout = awful.layout.layouts[2],
+            screen = s,
+        })
+        -- Zotero tag
+        awful.tag.add("ZOTERO", {
+            layout = awful.layout.layouts[2],
+            screen = s,
+        })
+        -- Calendar tag
+        awful.tag.add("CALENDAR", {
+            layout = awful.layout.layouts[2],
+            screen = s,
+        })
+    end
+    -- ↑↑↑2 END PRIMARY SCREEN
+
     if hostname then 
         -- ↓↓↓2 MANGCHI TAGS
         if hostname == "mangchi" then
@@ -307,43 +370,7 @@ awful.screen.connect_for_each_screen(function(s)
             -- ↑↑↑3 END LEFT SCREEN TAGS
             -- ↓↓↓3 CENTER SCREEN TAGS (Screen #1)
             elseif s.index == 1 then
-                -- Terminal tag
-                awful.tag.add("TERM", {
-                    --icon = "terminal-icon.png",
-                    layout = awful.layout.layouts[2],
-                    screen = s,
-                    selected = true,
-                })
-                -- Web tag
-                awful.tag.add("WEB", {
-                    layout = awful.layout.layouts[2],
-                    screen = s,
-                })
-                -- Comm tag
-                awful.tag.add("COMM", {
-                    layout = awful.layout.layouts[2],
-                    screen = s,
-                })
-                -- Obsidian tag
-                awful.tag.add("OBSIDIAN", {
-                    layout = awful.layout.layouts[2],
-                    screen = s,
-                })
-                -- Zotero tag
-                awful.tag.add("ZOTERO", {
-                    layout = awful.layout.layouts[2],
-                    screen = s,
-                })
-                -- Calendar tag
-                awful.tag.add("CALENDAR", {
-                    layout = awful.layout.layouts[2],
-                    screen = s,
-                })
-                -- Inkscape tag
-                awful.tag.add("INKSCAPE", {
-                    layout = awful.layout.layouts[1],
-                    screen = s,
-                })
+                -- See PRIMARY SCREEN section above.
             -- ↑↑↑3 END CENTER SCREEN TAGS
             -- ↓↓↓3 RIGHT SCREEN TAGS (Screen #3)
             elseif s.index == 3 then
@@ -403,38 +430,7 @@ awful.screen.connect_for_each_screen(function(s)
     -- OR --
         -- ↓↓↓2 LINBOSS TAGS
         elseif hostname == "linboss" then
-            -- Terminal tag
-            awful.tag.add("1-TERM", {
-                --icon = "terminal-icon.png",
-                layout = awful.layout.layouts[10],
-                screen = s,
-                selected = true,
-            })
-            -- Web tag
-            awful.tag.add("2-WEB", {
-                layout = awful.layout.layouts[10],
-                screen = s,
-            })
-            -- Comm tag
-            awful.tag.add("3-COMM", {
-                layout = awful.layout.layouts[2],
-                screen = s,
-            })
-            -- Obsidian tag
-            awful.tag.add("4-OBSIDIAN", {
-                layout = awful.layout.layouts[2],
-                screen = s,
-            })
-            -- Zotero tag
-            awful.tag.add("5-ZOTERO", {
-                layout = awful.layout.layouts[2],
-                screen = s,
-            })
-            -- Calendar tag
-            awful.tag.add("6-CALENDAR", {
-                layout = awful.layout.layouts[2],
-                screen = s,
-            })
+            -- See PRIMARY SCREEN above
         -- ↑↑↑2 END LINBOSS TAGS
     -- OR --
         -- ↓↓↓2 FALLBACK GENERAL TAGS
@@ -957,20 +953,29 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- Applications to start on login.
 autorun = true
 autorunApplicaitons = {
-    "kb",
-    --"xmodmap ~/.caps-to-ctrl.map", -- Set caps lock to control
-    "xset r rate 250 50", -- Set keyboard repeat delay and rate
-    "xset s off", -- Turn off screen blanking
-    "mate-terminal -e 'tmux new-session -A -s MAIN'", -- Make the session "MAIN" unless it exists, in which case, attach to it.
-    "firefox",
-    "telegram",
-    "obsidian",
-    "zotero",
-    "morgen"
+    common = {
+        "kb",
+        --"xmodmap ~/.caps-to-ctrl.map", -- Set caps lock to control
+        "xset r rate 250 50", -- Set keyboard repeat delay and rate
+        "xset s off", -- Turn off screen blanking
+        "nm-applet", -- The network manager applet that sits in the system tray.
+        "mate-terminal -e 'tmux new-session -A -s MAIN'", -- Make the session "MAIN" unless it exists, in which case, attach to it.
+        "firefox",
+        "telegram",
+        "obsidian",
+        "zotero",
+        "morgen"
+    },
+    mangchi = {},
+    linboss = {
+        "blueman-applet"
+    }
 }
 if autorun then
-    for _, app in pairs(autorunApplicaitons) do
-        awful.spawn("runonce "..app)
+    -- Combine the common with the host-specific apps.
+    allApps = concatTables(autorunApplicaitons["common"], autorunApplicaitons[hostname])
+    for _, app in pairs(allApps) do
+        runonce(app)
     end
 end
 -- ↑↑↑1 END STARTUP APPLICATIONS
