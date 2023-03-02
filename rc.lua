@@ -310,13 +310,13 @@ awful.screen.connect_for_each_screen(function(s)
             layout = awful.layout.layouts[2],
             screen = s,
         })
-        -- Comm tag
-        awful.tag.add("COMM", {
+        -- Obsidian tag
+        awful.tag.add("OBSIDIAN", {
             layout = awful.layout.layouts[2],
             screen = s,
         })
-        -- Obsidian tag
-        awful.tag.add("OBSIDIAN", {
+        -- Comm tag
+        awful.tag.add("COMM", {
             layout = awful.layout.layouts[2],
             screen = s,
         })
