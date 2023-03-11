@@ -192,7 +192,8 @@ local function rename_tag()
 
             local t = awful.screen.focused().selected_tag
             if t then
-                t.name = new_name
+                local upperName = string.upper(new_name)
+                t.name = upperName
             end
         end
     }
@@ -338,32 +339,8 @@ awful.screen.connect_for_each_screen(function(s)
         if hostname == "mangchi" then
             -- ↓↓↓3 LEFT SCREEN TAGS (Screen #4)
             if s.index == 4 then
-                -- Terminal tag
-                awful.tag.add("TERM", {
-                    icon = "terminal-icon.png",
-                    layout = awful.layout.layouts[10],
-                    screen = s,
-                    selected = true,
-                })
-                -- Web tag
-                awful.tag.add("WEB", {
-                    --icon = "terminal-icon.png",
-                    layout = awful.layout.layouts[10],
-                    screen = s,
-                })
-                -- Comm tag
-                awful.tag.add("COMM", {
-                    --icon = "terminal-icon.png",
-                    layout = awful.layout.layouts[10],
-                    screen = s,
-                })
-                -- Obsidian tag
-                awful.tag.add("OBSIDIAN", {
-                    layout = awful.layout.layouts[2],
-                    screen = s,
-                })
-                -- Inkscape tag
-                awful.tag.add("INKSCAPE", {
+                -- Left tag
+                awful.tag.add("LEFT", {
                     layout = awful.layout.layouts[2],
                     screen = s,
                 })
@@ -374,24 +351,8 @@ awful.screen.connect_for_each_screen(function(s)
             -- ↑↑↑3 END CENTER SCREEN TAGS
             -- ↓↓↓3 RIGHT SCREEN TAGS (Screen #3)
             elseif s.index == 3 then
-                -- Terminal tag
-                awful.tag.add("TERM", {
-                    layout = awful.layout.layouts[10],
-                    screen = s,
-                    selected = true,
-                })
-                -- Web tag
-                awful.tag.add("WEB", {
-                    layout = awful.layout.layouts[10],
-                    screen = s,
-                })
-                -- Comm tag
-                awful.tag.add("COMM", {
-                    layout = awful.layout.layouts[10],
-                    screen = s,
-                })
-                -- Obsidian tag
-                awful.tag.add("OBSIDIAN", {
+                -- Right tag
+                awful.tag.add("RIGHT", {
                     layout = awful.layout.layouts[2],
                     screen = s,
                 })
