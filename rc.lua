@@ -220,6 +220,37 @@ local function copy_tag()
     t2:view_only()
 end
 -- ↑↑↑2 END copy_tag
+-- ↓↓↓2 def move_tag()
+local function move_tag(direction)
+    tell("moving tab to the " .. direction)
+    local t = awful.screen.focused().selected_tag
+    if not t then return end
+
+    local numberOfTags = #awful.screen.focused().tags -- Using the length operator '#'
+
+    local index = t.index
+
+    -- Find index of tag to switch with
+    if direction == "left" then
+        local targetIndex = index - 1
+        if targetIndex < 1 then return end
+    elseif direction == "right" then
+        local targetIndex = index + 1
+        if targetIndex > numberOfTags then return end
+    end
+        
+    -- Find tag to switch with
+    for _, tag in pairs(awful.screen.focused().tags)
+        do
+        if tag.index == targetIndex then
+            local t2 = tag
+        end
+    end
+    if not t2 then return end
+    
+    t.swap(t2)
+end
+-- ↑↑↑2 END def move_tag()
 -- ↑↑↑1 END Tag add edit delete functions
 -- ↓↓↓1 STATUS BAR (CLOCK, TAGS, TASKLIST, LAYOUT INDICATOR)
 -- Create a wibox for each screen and add it
@@ -509,6 +540,10 @@ root.buttons(gears.table.join(
                     --{description = "create a copy of the current tag", group = "tag"}),
             awful.key({ modkey, "Shift"   }, "r", rename_tag,
                     {description = "rename the current tag", group = "tag"}),
+            awful.key({ modkey, "Shift"   }, "left", function() move_tag("left") end,
+                    {description = "Move the current tag left one space in the tag list", group = "tag"}),
+            awful.key({ modkey, "Shift"   }, "right", function() move_tag("right") end,
+                    {description = "Move the current tag left one space in the tag list", group = "tag"}),
             -- ↑↑↑4 END ADD/EDIT/DELTE
         -- ↑↑↑3 END TAG
         -- ↓↓↓3 LAYOUT 
