@@ -964,7 +964,8 @@ autorunApplicaitons = {
     },
     mangchi = {},
     linboss = {
-        "blueman-applet"
+        "blueman-applet",
+        "mate-power-manager"
     }
 }
 if autorun then
