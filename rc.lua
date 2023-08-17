@@ -64,7 +64,7 @@ end
 beautiful.init(gears.filesystem.get_configuration_dir() .. "themes/superboot/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "mate-terminal"
+terminal = "terminal"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
 
@@ -362,6 +362,11 @@ awful.screen.connect_for_each_screen(function(s)
             layout = awful.layout.layouts[2],
             screen = s,
         })
+        -- Email tag
+        awful.tag.add("EMAIL", {
+            layout = awful.layout.layouts[2],
+            screen = s,
+        })
     end
     -- ↑↑↑2 END PRIMARY SCREEN
 
@@ -424,6 +429,11 @@ awful.screen.connect_for_each_screen(function(s)
         elseif hostname == "linboss" then
             -- See PRIMARY SCREEN above
         -- ↑↑↑2 END LINBOSS TAGS
+    -- OR --
+        -- ↓↓↓2 FLIPPY TAGS
+        elseif hostname == "flippy" then
+            -- See PRIMARY SCREEN above
+        -- ↑↑↑2 END FLIPPY TAGS
     -- OR --
         -- ↓↓↓2 FALLBACK GENERAL TAGS
         else -- We can't match a hostname
@@ -868,11 +878,25 @@ awful.rules.rules = {
     { rule = { class = "obsidian" },
       properties = { screen = 1, tag = "OBSIDIAN" } 
     },
+    { rule = { name = "Quick Format Citation" },
+      properties = { screen = 1,
+                     tag = "OBSIDIAN",
+                     floating = true,
+                     size_hints_honor = true,
+                     ontop = true,
+                     x = 600,
+                     y = 600,
+                 },
+    },
     { rule = { class = "Zotero" },
-      properties = { screen = 1, tag = "ZOTERO" } 
+      except = { name = "Quick Format Citation" },
+      properties = { screen = 1, tag = "ZOTERO" },
     },
     { rule = { class = "Morgen" },
       properties = { screen = 1, tag = "CALENDAR" } 
+    },
+    { rule = { class = "Thunderbird" },
+      properties = { screen = 1, tag = "EMAIL" } 
     }
     -- ↑↑↑2 END SPECIFIC APPLICATIONS
     -- ↓↓↓2 EXAMPLE SETTING AN APPLICATION TO STAY ON A SPECIFIC TAG ON A SPECIFIC SCREEN
@@ -955,18 +979,28 @@ autorunApplicaitons = {
         "xset r rate 250 50", -- Set keyboard repeat delay and rate
         "xset s off", -- Turn off screen blanking
         "nm-applet", -- The network manager applet that sits in the system tray.
-        "mate-terminal -e 'tmux new-session -A -s MAIN'", -- Make the session "MAIN" unless it exists, in which case, attach to it.
+        "terminal -e 'tmux new-session -A -s MAIN'", -- Make the session "MAIN" unless it exists, in which case, attach to it.
         "firefox",
         "telegram",
         "obsidian",
         "zotero",
         "morgen"
     },
-    mangchi = {},
+    mangchi = {"thunderbird"},
     linboss = {
+<<<<<<< Updated upstream
         "blueman-applet",
         "mate-power-manager"
     }
+=======
+        "blueman-applet"
+    },
+    flippy = {
+        "lxqt-powermanagement", -- battery guage
+        "blueman-applet", -- Bluetooth management interface and panel indicator
+        "setX11SessionSettings" -- Sets the capslock to control, the mouse settings, the type speed, and dissables the power button.
+    },
+>>>>>>> Stashed changes
 }
 if autorun then
     -- Combine the common with the host-specific apps.
