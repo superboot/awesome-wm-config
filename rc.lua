@@ -681,6 +681,12 @@ root.buttons(gears.table.join(
         -- Test notification for seeing values.
         awful.key({ modkey },            "i",     function () naughty.notify { title = "THE TITLE", text = tostring(hostname) }  end,
                 {description = "Send a test notification", group = "launcher"}),
+        -- Lookup the definition of the word in the clipboard
+        awful.key({ modkey },            "d",     function () awful.spawn.easy_async("/home/john/bin/webSearchScript d p", launcherSpawnHandler) end,
+                {description = "Open the definition of the word in the clipboard", group = "launcher"}),
+        -- Lookup the definition of the highlighted word
+        awful.key({ modkey },            "/",     function () awful.spawn.easy_async("/home/john/bin/webSearchScript d h", launcherSpawnHandler) end,
+                {description = "Open the definition of the highlighted word", group = "launcher"}),
         -- ↑↑↑3 END LAUNCHERS
         -- ↓↓↓3 MENUBAR
         awful.key({ modkey }, "p", function() menubar.show() end,
