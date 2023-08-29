@@ -988,19 +988,14 @@ autorunApplicaitons = {
     },
     mangchi = {"thunderbird"},
     linboss = {
-<<<<<<< Updated upstream
         "blueman-applet",
         "mate-power-manager"
-    }
-=======
-        "blueman-applet"
     },
     flippy = {
         "lxqt-powermanagement", -- battery guage
         "blueman-applet", -- Bluetooth management interface and panel indicator
         "setX11SessionSettings" -- Sets the capslock to control, the mouse settings, the type speed, and dissables the power button.
     },
->>>>>>> Stashed changes
 }
 if autorun then
     -- Combine the common with the host-specific apps.
