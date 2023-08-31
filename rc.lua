@@ -677,7 +677,7 @@ root.buttons(gears.table.join(
                 {description = "Launch PAVU", group = "launcher"}),
         -- Screenshot into Obsidian vault
         awful.key({ modkey, "Control" }, "s",     function () awful.spawn.easy_async("/home/john/bin/screenshot-area-into-second-brain", launcherSpawnHandler) end,
-                {description = "Launch PAVU", group = "launcher"}),
+                {description = "Screenshot into second-brain", group = "launcher"}),
         -- Test notification for seeing values.
         awful.key({ modkey },            "i",     function () naughty.notify { title = "THE TITLE", text = tostring(hostname) }  end,
                 {description = "Send a test notification", group = "launcher"}),
